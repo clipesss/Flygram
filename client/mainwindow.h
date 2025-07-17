@@ -21,13 +21,18 @@ public:
 private slots:
     void startup();
     void newReadyRead();
-    void sendData();
+    void sendData(QString data);
+    void auth(QString data);
+    void reg();
 
-    void on_pushButton_clicked();
+    void on_registration_clicked();
+
+    void on_authButton_clicked();
 
 private:
     Ui::MainWindow *ui;
     QTcpSocket *socket;
+    int socketConnected = 0;
 
 };
 #endif // MAINWINDOW_H

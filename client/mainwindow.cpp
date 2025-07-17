@@ -6,13 +6,16 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    startup();
+    // startup();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+//reg#id#pass
+//auth#id#pass
 
 void MainWindow::startup()
 {
@@ -25,17 +28,74 @@ void MainWindow::startup()
 
 void MainWindow::newReadyRead()
 {
+    QByteArray data = socket->readAll();
+
+    if(data.startsWith("/authStatus"))
+    {
+        QString text_data = data.mid(12);
+        auth(text_data);
+    }
+    if(data.startsWith("/regStatus"))
+    {
+        QString text_data = data.mid(11);
+
+        if(text_data == "Id")
+        {
+            qDebug() << "This id is already taken";
+        }
+        else if(text_data == "true")
+        {
+            qDebug() << "Successful reg";
+            reg();
+        }
+    }
 
 }
 
-void MainWindow::sendData()
+void MainWindow::sendData(QString data)
 {
-    QByteArray data = "/reg#1337#pass133777";
-    socket->write(data);
+    QByteArray sendData = data.toUtf8();
+    socket->write(sendData);
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_registration_clicked()
 {
-    sendData();
+    if(socketConnected == 0)
+    {
+        startup();
+        socketConnected++;
+    }
+
+    sendData("/reg#"+ui->idText->text()+"#"+ui->passText->text());
 }
 
+
+void MainWindow::on_authButton_clicked()
+{
+    if(socketConnected == 0)
+    {
+        startup();
+        socketConnected++;
+    }
+
+    sendData("/auth#"+ui->idText2->text()+"#"+ui->passText2->text());
+}
+
+void MainWindow::reg()
+{
+
+    ui->stackedWidget->setCurrentIndex(1);
+
+}
+
+void MainWindow::auth(QString data)
+{
+    if(data == "true")
+    {
+        qDebug() << "Successful Auth";
+    }
+    else if(data == "false")
+    {
+        qDebug() << "Error Auth";
+    }
+}
