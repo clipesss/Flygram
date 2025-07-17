@@ -31,9 +31,54 @@ void MainWindow::newReadyRead()
     {
         QString data_text = data.mid(5);
         QStringList splitedData = data_text.split("#");
+        int stat = 0;
 
-        User *user = new User(splitedData[0],splitedData[1]);
-        users.push_back(user);
+        User *user = new User(splitedData[0], splitedData[1], socket, "");
+
+        for(auto it : users)
+        {
+            if(it->GetId() == splitedData[0])
+            {
+                socket->write("/regStatus#Id");
+                stat++;
+                break;
+            }
+        }
+
+        if(stat == 0)
+        {
+            users.push_back(user);
+            socket->write("/regStatus#true");
+        }
+    }
+    if(data.startsWith("/auth"))
+    {
+        QString data_text = data.mid(6);
+        QStringList splitedData = data_text.split("#");
+        int stat = 0;
+
+        for(auto &it : users)
+        {
+            if(it->GetId() == splitedData[0])
+            {
+                if(it->GetPass() == splitedData[1])
+                {
+                    User *user = new User(splitedData[0], splitedData[1], socket, "");
+                    it = user;
+                    socket->write("/authStatus#true");
+                    stat = 1;
+                    break;
+                }
+            }
+        }
+        if(stat == 1)
+        {
+            stat = 0;
+        }
+        else
+        {
+            socket->write("/authStatus#false");
+        }
     }
 }
 

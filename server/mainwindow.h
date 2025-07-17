@@ -22,20 +22,33 @@ public:
     {
     public:
 
-        User(QString id, QString pass)
+        User(QString id, QString pass, QTcpSocket *socket, QString messages)
         {
             this->id = id;
             this->pass = pass;
-
+            this->socket = socket;
+            this->messages = messages;
         }
 
         void Get()
         {
-            qDebug() << "Id: " << id << " Pass: " << pass;
+            qDebug() << "Id: " << id << " Pass: " << pass << " Socket Ip: " << socket->peerAddress() << " Messages size: " << messages.size();
+        }
+
+        QString GetId()
+        {
+            return id;
+        }
+
+        QString GetPass()
+        {
+            return pass;
         }
 
         QString id;
         QString pass;
+        QTcpSocket *socket;
+        QString messages;
     };
 
 private slots:
