@@ -18,21 +18,44 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    class Messages
+    {
+    public:
+        Messages(QString string, QString chatWith)
+        {
+            this->allHistory += string;
+            this->chatWith = chatWith;
+        }
+
+        QString GetChatHistory()
+        {
+            return allHistory;
+        }
+
+        void ReWriteChat(QString messages)
+        {
+            allHistory+=messages;
+        }
+
+        QString allHistory;
+        QString chatWith;
+    };
+
     class User
     {
     public:
 
-        User(QString id, QString pass, QTcpSocket *socket, QString messages)
+        User(QString id, QString pass, QTcpSocket *socket)
         {
             this->id = id;
             this->pass = pass;
             this->socket = socket;
-            this->messages = messages;
         }
 
         void Get()
         {
-            qDebug() << "Id: " << id << " Pass: " << pass << " Socket Ip: " << socket->peerAddress() << " Messages size: " << messages.size();
+            qDebug() << "Id: " << id << " Pass: " << pass << " Socket Ip: " << socket->peerAddress();
         }
 
         QString GetId()
@@ -45,10 +68,51 @@ public:
             return pass;
         }
 
+        bool isExistChat(QString idUser)
+        {
+            for(auto it : chats)
+            {
+                if(it->chatWith == idUser)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        void addChat(Messages *chat)
+        {
+            chats.push_back(chat);
+        }
+
+        bool ReWriteChat(QString chat, QString idUser)
+        {
+            for(auto it : chats)
+            {
+                if(it->chatWith == id)
+                {
+                    it->ReWriteChat(chat);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        QString GetChatHistory(QString idUser)
+        {
+            for(auto it : chats)
+            {
+                if(it->chatWith == idUser)
+                {
+                    return it->GetChatHistory();
+                }
+            }
+        }
+
         QString id;
         QString pass;
         QTcpSocket *socket;
-        QString messages;
+        QVector<Messages*> chats;
     };
 
 private slots:
@@ -58,12 +122,16 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_pushButton_2_clicked();
+
 private:
     Ui::MainWindow *ui;
     QTcpServer *server;
-    QTcpSocket *socket;
+    //QTcpSocket *socket;
     QVector<User*> users;
+    QList<QTcpSocket*> clients;
 
+    int chatCheck = 0;
 };
 
 #endif // MAINWINDOW_H

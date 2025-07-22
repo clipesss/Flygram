@@ -18,13 +18,26 @@
     <property name="geometry">
      <rect>
       <x>340</x>
-      <y>310</y>
+      <y>410</y>
       <width>80</width>
       <height>24</height>
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>GetAllUsers</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>340</y>
+      <width>80</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>GetChatWith</string>
     </property>
    </widget>
   </widget>
