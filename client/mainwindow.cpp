@@ -23,7 +23,7 @@ void MainWindow::startup()
 
     QObject::connect(socket,&QTcpSocket::readyRead, this, &MainWindow::newReadyRead);
 
-    socket->connectToHost("192.168.0.193",4444);
+    socket->connectToHost("193.233.254.72",4444);
 }
 
 void MainWindow::newReadyRead()
@@ -67,6 +67,8 @@ void MainWindow::on_registration_clicked()
     }
 
     sendData("/reg#"+ui->idText->text()+"#"+ui->passText->text());
+    my_id = ui->idText->text();
+
 }
 
 
@@ -77,7 +79,7 @@ void MainWindow::on_authButton_clicked()
         startup();
         socketConnected++;
     }
-
+    my_id = ui->idText2->text();
     sendData("/auth#"+ui->idText2->text()+"#"+ui->passText2->text());
 }
 
@@ -93,9 +95,19 @@ void MainWindow::auth(QString data)
     if(data == "true")
     {
         qDebug() << "Successful Auth";
+        ui->stackedWidget->setCurrentIndex(2);
     }
     else if(data == "false")
     {
         qDebug() << "Error Auth";
     }
 }
+//"/sendMsg~ОтКого~Кому~Время~Сообщение
+void MainWindow::on_send_clicked()
+{
+    QString time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm");
+    QString data = "/sendMsg~" + my_id + "~" + ui->to_user->text() + "~" + time + "~" + ui->message_2->text();
+    qDebug() << "Message sended";
+    sendData(data);
+}
+

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QTcpSocket>
+#include <QDateTime>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -29,9 +30,12 @@ private slots:
 
     void on_authButton_clicked();
 
+    void on_send_clicked();
+
 private:
     Ui::MainWindow *ui;
     QTcpSocket *socket;
+    QString my_id;
     int socketConnected = 0;
 
 };
