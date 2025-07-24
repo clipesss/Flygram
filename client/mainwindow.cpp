@@ -32,8 +32,7 @@ void MainWindow::newReadyRead()
 
     if(data.startsWith("/authStatus"))
     {
-        QString text_data = data.mid(12);
-        auth(text_data);
+        auth(data);
     }
     if(data.startsWith("/regStatus"))
     {
@@ -49,7 +48,6 @@ void MainWindow::newReadyRead()
             reg();
         }
     }
-
 }
 
 void MainWindow::sendData(QString data)
@@ -92,12 +90,22 @@ void MainWindow::reg()
 
 void MainWindow::auth(QString data)
 {
-    if(data == "true")
+    QString status = data.mid(12);
+    if(status.startsWith("true"))
     {
         qDebug() << "Successful Auth";
+
+        QString chats_test = data.mid(17);
+        QStringList chats = chats_test.split("~");
+
+        for(auto it : chats)
+        {
+            qDebug() << it;
+        }
+
         ui->stackedWidget->setCurrentIndex(2);
     }
-    else if(data == "false")
+    else if(status.startsWith("false"))
     {
         qDebug() << "Error Auth";
     }
