@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -30,12 +31,13 @@ public:
 
         QString GetChatHistory()
         {
+            qDebug() << 777 << chatWith << "   " << allHistory;
             return allHistory;
         }
 
         void ReWriteChat(QString messages)
         {
-            allHistory+=messages;
+            allHistory = allHistory + messages;
         }
 
         QString allHistory;
@@ -55,7 +57,7 @@ public:
 
         void Get()
         {
-            qDebug() << "Id: " << id << " Pass: " << pass << " Socket Ip: " << socket->peerAddress();
+            qDebug() << "Id: " << id << " Pass: " << pass;
         }
 
         QString GetId()
@@ -82,6 +84,7 @@ public:
 
         void addChat(Messages *chat)
         {
+            qDebug() << 1;
             chats.push_back(chat);
         }
 
@@ -89,7 +92,7 @@ public:
         {
             for(auto it : chats)
             {
-                if(it->chatWith == id)
+                if(it->chatWith == idUser)
                 {
                     it->ReWriteChat(chat);
                     return true;
@@ -104,9 +107,20 @@ public:
             {
                 if(it->chatWith == idUser)
                 {
-                    return it->GetChatHistory();
+                    QString data = it->GetChatHistory();
+                    if(data != "")
+                    {
+                        return data;
+                    }
                 }
             }
+        }
+
+        void setNewData(QString id, QString pass, QTcpSocket *socket)
+        {
+            this->id = id;
+            this->pass = pass;
+            this->socket = socket;
         }
 
         QString id;
@@ -123,6 +137,8 @@ private slots:
     void on_pushButton_clicked();
 
     void on_pushButton_2_clicked();
+
+    void on_pushButton_3_clicked();
 
 private:
     Ui::MainWindow *ui;

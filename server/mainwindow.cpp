@@ -65,9 +65,22 @@ void MainWindow::newReadyRead()
             {
                 if(it->GetPass() == splitedData[1])
                 {
-                    User *user = new User(splitedData[0], splitedData[1], socket);
-                    it = user;
-                    socket->write("/authStatus#true");
+                    it->setNewData(splitedData[0], splitedData[1], socket);
+                    QString chats_users;
+
+                    qDebug() << it->chats.size() << "777" << it->GetId();
+                    for(auto it : it->chats)
+                    {
+                        qDebug() << 777;
+                        qDebug() << it->chatWith;
+                        chats_users += "~" + it->chatWith;
+                        //qDebug() << chats_users;
+                    }
+
+
+                    QString temp = "/authStatus#true" + chats_users;
+                    qDebug() << temp;
+                    socket->write(temp.toUtf8());
                     stat = 1;
                     break;
                 }
@@ -153,7 +166,6 @@ void MainWindow::newConnection()
 
     connect(clientSocket, &QTcpSocket::readyRead, this, &MainWindow::newReadyRead);
     connect(clientSocket, &QTcpSocket::disconnected, this, [this, clientSocket]() {
-        clients.removeOne(clientSocket);
         clientSocket->deleteLater();
     });
     qDebug() << "Connected: " << clientSocket->peerAddress();
@@ -189,6 +201,34 @@ void MainWindow::on_pushButton_2_clicked()
             {
                 qDebug() << 2;
                 qDebug() << it->GetChatHistory("vipuser1337");
+            }
+        }
+    }
+}
+
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    for(auto it : users)
+    {
+        if(it->GetId() == "vipuser1337")
+        {
+            qDebug() << it->chats.size();
+            for(auto it : it->chats)
+            {
+                qDebug() << it->chatWith;
+            }
+        }
+    }
+
+    for(auto it : users)
+    {
+        if(it->GetId() == "vipuser228")
+        {
+            qDebug() << it->chats.size();
+            for(auto it : it->chats)
+            {
+                qDebug() << it->chatWith;
             }
         }
     }
